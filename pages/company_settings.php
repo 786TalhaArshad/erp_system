@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         if ($company) {
             $result = modifyData("UPDATE company_settings SET company_name=?, company_tagline=?, address=?, phone=?, email=?, website=?, date_time=? WHERE id=?",
-                'sssssss', [$company_name, $company_tagline, $address, $phone, $email, $website, getCurrentDateTime(), $company['id']]);
+                'ssssssss', [$company_name, $company_tagline, $address, $phone, $email, $website, getCurrentDateTime(), $company['id']]);
         } else {
             $result = insertData("INSERT INTO company_settings (company_name, company_tagline, address, phone, email, website, date_time) VALUES (?,?,?,?,?,?,?)",
                 'sssssss', [$company_name, $company_tagline, $address, $phone, $email, $website, getCurrentDateTime()]);

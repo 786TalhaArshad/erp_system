@@ -1,9 +1,9 @@
+<?php
 require_once '../includes/database.php';
 requireLogin();
 
 $pageTitle = 'Banks';
 
-// Flash handling
 $flash = getFlash();
 $message = '';
 $messageType = '';
@@ -12,42 +12,32 @@ if ($flash) {
     $messageType = $flash['type'];
 }
 
-// Delete handler
 if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     $bankId = (int)$_GET['delete'];
-
-    // Check if any account transactions reference this bank
-    $checkResult = executePrepared(
-        "SELECT COUNT(*) as cnt FROM accounts WHERE account_name = (SELECT bank_name FROM banks WHERE id = ?)",
-        "i",
-        [$bankId]
-    );
-    $checkRow = $checkResult->fetch_assoc();
-
-    if ($checkRow && $checkRow['cnt'] > 0) {
-        setFlash('Cannot delete this bank because it is referenced in account transactions.', 'danger');
-    } else {
-        $result = executePrepared("DELETE FROM banks WHERE id = ?", "i", [$bankId]);
-        if ($result) {
-            setFlash('Bank deleted successfully.', 'success');
+    $bank = getRow("SELECT bank_name FROM banks WHERE id = ?", 'i', [$bankId]);
+    if ($bank) {
+        $check = getRow("SELECT COUNT(*) as cnt FROM accounts WHERE description LIKE ?", 's', ['%' . $bank['bank_name'] . '%']);
+        if ($check && $check['cnt'] > 0) {
+            setFlash('Cannot delete: bank is referenced in account transactions.', 'danger');
         } else {
-            setFlash('Failed to delete bank.', 'danger');
+            modifyData("DELETE FROM banks WHERE id = ?", 'i', [$bankId]);
+            setFlash('Bank deleted successfully.', 'success');
         }
+    } else {
+        setFlash('Bank not found.', 'danger');
     }
     header('Location: banks.php');
     exit;
 }
 
-// Query all banks
 $banks = getRows("SELECT * FROM banks ORDER BY id DESC");
 
-// Summary data
 $totalBanks = count($banks);
-$totalOpeningBalance = 0;
-$totalCurrentBalance = 0;
-foreach ($banks as $bank) {
-    $totalOpeningBalance += $bank['opening_balance'];
-    $totalCurrentBalance += $bank['current_balance'];
+$totalOpening = 0;
+$totalCurrent = 0;
+foreach ($banks as $b) {
+    $totalOpening += (float)$b['opening_balance'];
+    $totalCurrent += (float)$b['current_balance'];
 }
 
 include '../includes/header.php';
@@ -56,134 +46,91 @@ include '../includes/sidebar.php';
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 
-<div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0">Banks</h1>
+<div class="container-fluid px-3">
+    <?php if ($message): ?>
+        <div class="alert alert-<?php echo $messageType; ?> alert-dismissible fade show my-2 py-2"><?php echo $message; ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <?php endif; ?>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0"><i class="fas fa-university me-2"></i>Banks</h5>
+        <div>
+            <a href="add_bank.php" class="btn btn-success btn-sm"><i class="fas fa-plus me-1"></i>Add Bank</a>
+            <a href="<?php echo $r; ?>index.php" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+        </div>
+    </div>
+
+    <div class="row g-2 mb-3">
+        <div class="col-md-4">
+            <div class="card shadow-sm" style="border-top:3px solid #1a2332;">
+                <div class="card-body py-2">
+                    <div class="text-muted small">Total Banks</div>
+                    <h4 class="mb-0"><?php echo $totalBanks; ?></h4>
                 </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
-                        <li class="breadcrumb-item active">Banks</li>
-                    </ol>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm" style="border-top:3px solid #1a2332;">
+                <div class="card-body py-2">
+                    <div class="text-muted small">Total Opening Balance</div>
+                    <h4 class="mb-0"><?php echo number_format($totalOpening, 2); ?></h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm" style="border-top:3px solid #1a2332;">
+                <div class="card-body py-2">
+                    <div class="text-muted small">Total Current Balance</div>
+                    <h4 class="mb-0"><?php echo number_format($totalCurrent, 2); ?></h4>
                 </div>
             </div>
         </div>
     </div>
 
-    <section class="content">
-        <div class="container-fluid">
-
-            <?php if ($message): ?>
-                <div class="alert alert-<?php echo htmlspecialchars($messageType); ?> alert-dismissible fade show" role="alert">
-                    <?php echo htmlspecialchars($message); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
-
-            <!-- Summary Cards -->
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="card" style="border-top: 3px solid #1a2332;">
-                        <div class="card-body">
-                            <h5 class="card-title text-muted">Total Banks</h5>
-                            <h3 class="mb-0"><?php echo $totalBanks; ?></h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card" style="border-top: 3px solid #1a2332;">
-                        <div class="card-body">
-                            <h5 class="card-title text-muted">Total Opening Balance</h5>
-                            <h3 class="mb-0"><?php echo number_format($totalOpeningBalance, 2); ?></h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card" style="border-top: 3px solid #1a2332;">
-                        <div class="card-body">
-                            <h5 class="card-title text-muted">Total Current Balance</h5>
-                            <h3 class="mb-0"><?php echo number_format($totalCurrentBalance, 2); ?></h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card" style="border-top: 3px solid #28a745;">
-                        <div class="card-body">
-                            <h5 class="card-title text-muted">Actions</h5>
-                            <a href="add_bank.php" class="btn btn-success btn-sm">
-                                <i class="fas fa-plus"></i> Add Bank
-                            </a>
-                            <a href="../index.php" class="btn btn-secondary btn-sm">
-                                <i class="fas fa-arrow-left"></i> Back
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Banks Table -->
-            <div class="card" style="border-top: 3px solid #1a2332;">
-                <div class="card-header" style="background-color: #1a2332; color: #fff;">
-                    <h3 class="card-title"><i class="fas fa-university"></i> All Banks</h3>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="banksTable" class="table table-bordered table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Bank Name</th>
-                                    <th>Account No</th>
-                                    <th>Account Type</th>
-                                    <th>Opening Balance</th>
-                                    <th>Current Balance</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($banks as $index => $bank): ?>
-                                    <tr>
-                                        <td><?php echo $index + 1; ?></td>
-                                        <td><?php echo htmlspecialchars($bank['bank_name']); ?></td>
-                                        <td><?php echo htmlspecialchars($bank['account_no']); ?></td>
-                                        <td><?php echo htmlspecialchars($bank['account_type']); ?></td>
-                                        <td class="text-right"><?php echo number_format($bank['opening_balance'], 2); ?></td>
-                                        <td class="text-right"><?php echo number_format($bank['current_balance'], 2); ?></td>
-                                        <td>
-                                            <a href="add_bank.php?edit=<?php echo $bank['id']; ?>" class="btn btn-sm btn-warning" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="banks.php?delete=<?php echo $bank['id']; ?>" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this bank?');">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
+    <div class="card shadow-sm" style="border-top:3px solid #1a2332;">
+        <div class="card-header py-2" style="background:#1a2332;color:#fff;">
+            <i class="fas fa-university me-1"></i>All Banks
         </div>
-    </section>
+        <div class="card-body p-2">
+            <div class="table-responsive">
+                <table id="banksTable" class="table table-sm table-striped table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Bank Name</th>
+                            <th>Account No</th>
+                            <th>Account Type</th>
+                            <th>Opening Balance</th>
+                            <th>Current Balance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($banks as $i => $bank): ?>
+                            <tr>
+                                <td><?php echo $i + 1; ?></td>
+                                <td><?php echo htmlspecialchars($bank['bank_name']); ?></td>
+                                <td><?php echo htmlspecialchars($bank['account_number']); ?></td>
+                                <td><?php echo ucfirst($bank['account_type']); ?></td>
+                                <td class="text-end"><?php echo number_format($bank['opening_balance'], 2); ?></td>
+                                <td class="text-end"><?php echo number_format($bank['current_balance'], 2); ?></td>
+                                <td>
+                                    <a href="add_bank.php?edit=<?php echo $bank['id']; ?>" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a href="banks.php?delete=<?php echo $bank['id']; ?>" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Delete this bank?');"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
 $(document).ready(function() {
-    $('#banksTable').DataTable({
-        "order": [[0, "desc"]],
-        "pageLength": 25,
-        "language": {
-            "emptyTable": "No banks found"
-        }
-    });
+    $('#banksTable').DataTable({ order: [[0, 'desc']], pageLength: 25, language: { emptyTable: 'No banks found' } });
 });
 </script>
 

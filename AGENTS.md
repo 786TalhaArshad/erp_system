@@ -7,7 +7,7 @@
 - **Database**: MySQL `erp_system` on `localhost` (`root` / empty password)
   - `includes/database.php` defines helpers: `getRow`, `getRows`, `insertData`, `modifyData`, `executePrepared`, `escapeString`
   - `erp_system.sql` is the canonical schema + seed; also present: `erp_new.sql`, `erp_system (1).sql`, `fix_missing_tables.sql` — no migration tool, ALTER TABLE manually
-  - Session auto-starts at `database.php:209` — do NOT call `session_start()` again
+   - Session auto-starts at `database.php:210` — do NOT call `session_start()` again
 - **Frontend**: Bootstrap 5.3, Font Awesome 6.4, jQuery 3.7, DataTables 1.13 — all **CDN-loaded**
   - jQuery loads in `header.php:300` (before inline scripts)
   - Bootstrap JS bundle loads in `footer.php:6`
@@ -22,13 +22,15 @@
 ## Architecture
 - `login.php`, `logout.php` — standalone auth entrypoints; logout.php calls `session_start()` directly (doesn't include database.php)
 - `index.php` — dashboard (requires login, includes header/sidebar/footer)
-- `includes/` — `header.php` (opens `<html>` + sidebar wrapper), `sidebar.php`, `footer.php` (closes wrapper + Bootstrap JS)
+- `includes/` — `header.php` (opens `<html>` + sidebar wrapper), `sidebar.php`, `footer.php` (closes wrapper + Bootstrap JS), `print_header.php` (shared print header with company info, used by report/print pages)
 - `includes/product_detail.php` — anomaly: lives in `includes/` but follows the `pages/` pattern (uses `../includes/` paths); acts as a standalone page
 - `pages/` — one file per module, called directly (e.g. `/erp_system/pages/raw_materials.php`)
 - `sidebar.php` auto-detects `$isInPages` to set `$p` (prefix for links) and `$r` (root-prefix for back-to-root links)
   - `$p = $isInPages ? '' : 'pages/'` — links use `<?php echo $p; ?>filename.php`
   - `$r = $isInPages ? '../' : ''` — for links back to root files like `index.php`
-  - Sidebar active-state uses `strpos()` on `$_SERVER['PHP_SELF']` — substrings can match (e.g. `sales` may match when on `raw_sales`)
+  - Sidebar active-state uses `in_array($page, $array)` with exact filename arrays per section — NOT `strpos()` (which caused false positives like `all_customers_closing.php` matching the Customers section)
+  - `$page = basename($_SERVER['PHP_SELF'])` is set at top; each section has an explicit filename list (e.g. `$sales`, `$customers`, `$reports`)
+  - When adding a new page, add its filename to the relevant array in `sidebar.php` to get correct active/open behavior
 - Accordion submenus: `data-bs-parent=".sidebar-nav"` on each collapse — opening one closes others
 
 ## Page Pattern
@@ -84,9 +86,13 @@ Also: Employee Ledger, Expense Management, Accounts, Reports.
 - **Customers** split: Add (`add_customer.php`) and View (`customers.php`) are separate pages; Customer Receiving (`customer_receiving.php`) is separate
 - **Production**: One-step flow — creates order as `'completed'`, deducts raw materials, adds finished goods with weighted-average cost
 - **Sales**: Can be `'hold'` (draft) or `'completed'`; hold bills are editable from `view_hold_bills.php`
+- **Sales balance**: In `new_sale.php`, `balance = total_amount - discount` (NOT `final_amount` which includes prev balance for display). `final_amount` = `bill - discount` (excludes prev balance). Prev balance is display-only in the UI.
+- **Sales table columns**: `sales` table has `customer_type`, `walkin_name`, `walkin_phone`, `final_amount`, `payment_method` beyond the base columns. INSERT queries must include all of them.
+- **customer_receiving.php balance**: Receipt delete recalculates using `total_amount - discount` to stay consistent with `new_sale.php` balance convention.
 - **SQL files**: Multiple SQL files exist in root — `erp_system.sql` is canonical; others are incremental fixes or backups
 
 ## Development
 - **No build step, no package manager, no tests, no CI** — PHP on XAMPP
 - Run: create `erp_system` DB via phpMyAdmin → import `erp_system.sql` → visit `http://localhost/erp_system/`
 - PHP binary at `C:\xampp\php\php.exe`
+- To run one-off PHP: `C:\xampp\php\php.exe -r "require_once 'C:/xampp/htdocs/erp_system/includes/database.php'; ..."`

@@ -1,8 +1,24 @@
 <?php
 // Auto-detect path prefix: works whether included from root or pages/
 $isInPages = strpos($_SERVER['PHP_SELF'], '/pages/') !== false;
+$page = basename($_SERVER['PHP_SELF']);
 $p = $isInPages ? '' : 'pages/';
 $r = $isInPages ? '../' : '';
+
+// Exact filename lists per section — prevents strpos false positives
+$localPurchases = ['add_local_purchase.php', 'local_purchases.php'];
+$importPurchases = ['add_import_purchase.php', 'import_purchases.php'];
+$suppliers = ['local_suppliers.php', 'suppliers_summary.php', 'supplier_payments.php', 'supplier_detail.php', 'supplier_ledger.php', 'chinese_suppliers.php', 'chinese_suppliers_summary.php', 'chinese_supplier_payment.php'];
+$rawMaterials = ['raw_materials.php', 'add_raw_materials.php'];
+$finishedGoods = ['finished_goods.php', 'add_finished_goods.php', 'products.php', 'add_product.php'];
+$production = ['add_production.php', 'production.php', 'view_production.php'];
+$sales = ['new_sale.php', 'sales.php', 'view_hold_bills.php', 'sale_print.php'];
+$customers = ['add_customer.php', 'customers.php', 'customer_receiving.php'];
+$party = ['add_party.php', 'parties.php', 'add_party_payable.php', 'add_party_received.php', 'add_party_paid.php'];
+$employees = ['add_employee.php', 'employees.php', 'employee_payable.php', 'employee_paid.php'];
+$expenses = ['expense_heads.php', 'expenses.php'];
+$accounts = ['accounts.php', 'cashbook.php', 'bankbook.php', 'banks.php', 'add_bank.php', 'balance_sheet.php', 'company_settings.php'];
+$reports = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cashflow.php', 'reports_purchases.php', 'reports_sales.php', 'reports_inventory.php', 'reports_expenses.php', 'reports_production.php', 'reports_suppliers.php', 'reports_customers.php', 'reports_parties.php', 'reports_employees.php', 'all_customers_closing.php', 'all_suppliers_closing.php', 'all_parties_closing.php', 'customer_ledger.php', 'supplier_ledger.php', 'chinese_supplier_ledger.php', 'suppliers_summary.php', 'chinese_suppliers_summary.php'];
 ?>
 <!-- Sidebar -->
 <nav id="sidebar">
@@ -20,12 +36,12 @@ $r = $isInPages ? '../' : '';
         </div>
         
         <!-- Local Purchases -->
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'local_purchases') !== false || strpos($_SERVER['PHP_SELF'], 'add_local_purchase') !== false ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $localPurchases) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#localPurchaseSubmenu">
                 <i class="fas fa-shopping-bag"></i> Local Purchases
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo strpos($_SERVER['PHP_SELF'], 'local_purchases') !== false || strpos($_SERVER['PHP_SELF'], 'add_local_purchase') !== false ? 'show' : ''; ?>" id="localPurchaseSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $localPurchases) ? 'show' : ''; ?>" id="localPurchaseSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_local_purchase.php"><i class="fas fa-angle-right me-2"></i>Add Purchase</a>
                     <a href="<?php echo $p; ?>local_purchases.php"><i class="fas fa-angle-right me-2"></i>View Purchase</a>
@@ -33,12 +49,12 @@ $r = $isInPages ? '../' : '';
             </div>
         </div>
         
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'import_purchases') !== false || strpos($_SERVER['PHP_SELF'], 'add_import_purchase') !== false ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $importPurchases) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#importPurchaseSubmenu">
                 <i class="fas fa-ship"></i> Import Purchases (CNY)
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo strpos($_SERVER['PHP_SELF'], 'import_purchases') !== false || strpos($_SERVER['PHP_SELF'], 'add_import_purchase') !== false ? 'show' : ''; ?>" id="importPurchaseSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $importPurchases) ? 'show' : ''; ?>" id="importPurchaseSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_import_purchase.php"><i class="fas fa-angle-right me-2"></i>Add Purchase</a>
                     <a href="<?php echo $p; ?>import_purchases.php"><i class="fas fa-angle-right me-2"></i>View Purchase</a>
@@ -47,12 +63,12 @@ $r = $isInPages ? '../' : '';
         </div>
         
         <!-- Suppliers -->
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'suppliers') !== false || strpos($_SERVER['PHP_SELF'], 'supplier_payments') !== false || strpos($_SERVER['PHP_SELF'], 'supplier_detail') !== false || strpos($_SERVER['PHP_SELF'], 'supplier_ledger') !== false ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $suppliers) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#supplierSubmenu">
                 <i class="fas fa-truck"></i> Suppliers
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo strpos($_SERVER['PHP_SELF'], 'suppliers') !== false || strpos($_SERVER['PHP_SELF'], 'supplier_payments') !== false || strpos($_SERVER['PHP_SELF'], 'supplier_detail') !== false || strpos($_SERVER['PHP_SELF'], 'supplier_ledger') !== false ? 'show' : ''; ?>" id="supplierSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $suppliers) ? 'show' : ''; ?>" id="supplierSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <div class="sub-group-label">Local Suppliers</div>
                     <a href="<?php echo $p; ?>local_suppliers.php"><i class="fas fa-angle-right me-2"></i>Supplier List</a>
@@ -67,25 +83,39 @@ $r = $isInPages ? '../' : '';
         </div>
         
         <!-- Inventory -->
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'raw_materials') !== false ? 'active' : ''; ?>">
-            <a href="<?php echo $p; ?>raw_materials.php">
+        <div class="nav-item <?php echo in_array($page, $rawMaterials) ? 'active' : ''; ?>">
+            <a href="#" data-bs-toggle="collapse" data-bs-target="#rawMaterialsSubmenu">
                 <i class="fas fa-cubes"></i> Raw Materials
+                <i class="fas fa-chevron-down ms-auto"></i>
             </a>
+            <div class="collapse <?php echo in_array($page, $rawMaterials) ? 'show' : ''; ?>" id="rawMaterialsSubmenu" data-bs-parent=".sidebar-nav">
+                <div class="sub-menu">
+                    <a href="<?php echo $p; ?>add_raw_materials.php"><i class="fas fa-angle-right me-2"></i>Add Raw Material</a>
+                    <a href="<?php echo $p; ?>raw_materials.php"><i class="fas fa-angle-right me-2"></i>View Raw Materials</a>
+                </div>
+            </div>
         </div>
         
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'finished_goods') !== false || strpos($_SERVER['PHP_SELF'], 'products') !== false || strpos($_SERVER['PHP_SELF'], 'add_product') !== false ? 'active' : ''; ?>">
-            <a href="<?php echo $p; ?>finished_goods.php">
+        <div class="nav-item <?php echo in_array($page, $finishedGoods) ? 'active' : ''; ?>">
+            <a href="#" data-bs-toggle="collapse" data-bs-target="#finishedGoodsSubmenu">
                 <i class="fas fa-boxes"></i> Finished Goods
+                <i class="fas fa-chevron-down ms-auto"></i>
             </a>
+            <div class="collapse <?php echo in_array($page, $finishedGoods) ? 'show' : ''; ?>" id="finishedGoodsSubmenu" data-bs-parent=".sidebar-nav">
+                <div class="sub-menu">
+                    <a href="<?php echo $p; ?>add_finished_goods.php"><i class="fas fa-angle-right me-2"></i>Add Finished Good</a>
+                    <a href="<?php echo $p; ?>finished_goods.php"><i class="fas fa-angle-right me-2"></i>View Finished Goods</a>
+                </div>
+            </div>
         </div>
         
         <!-- Production -->
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'add_production') !== false || strpos($_SERVER['PHP_SELF'], 'production') !== false || strpos($_SERVER['PHP_SELF'], 'view_production') !== false ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $production) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#productionSubmenu">
                 <i class="fas fa-cogs"></i> Production
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo strpos($_SERVER['PHP_SELF'], 'add_production') !== false || strpos($_SERVER['PHP_SELF'], 'production') !== false || strpos($_SERVER['PHP_SELF'], 'view_production') !== false ? 'show' : ''; ?>" id="productionSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $production) ? 'show' : ''; ?>" id="productionSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_production.php"><i class="fas fa-angle-right me-2"></i>New Production</a>
                     <a href="<?php echo $p; ?>production.php"><i class="fas fa-angle-right me-2"></i>View Production</a>
@@ -94,12 +124,12 @@ $r = $isInPages ? '../' : '';
         </div>
         
         <!-- Sales -->
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'sales') !== false || strpos($_SERVER['PHP_SELF'], 'new_sale') !== false || strpos($_SERVER['PHP_SELF'], 'view_hold_bills') !== false ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $sales) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#salesSubmenu">
                 <i class="fas fa-handshake"></i> Sales
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo strpos($_SERVER['PHP_SELF'], 'sales') !== false || strpos($_SERVER['PHP_SELF'], 'new_sale') !== false || strpos($_SERVER['PHP_SELF'], 'view_hold_bills') !== false ? 'show' : ''; ?>" id="salesSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $sales) ? 'show' : ''; ?>" id="salesSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <div class="sub-group-label">Sales Orders</div>
                     <a href="<?php echo $p; ?>new_sale.php"><i class="fas fa-angle-right me-2"></i>New Sale</a>
@@ -110,12 +140,12 @@ $r = $isInPages ? '../' : '';
         </div>
         
         <!-- Customers -->
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'customers') !== false || strpos($_SERVER['PHP_SELF'], 'add_customer') !== false || strpos($_SERVER['PHP_SELF'], 'customer_receiving') !== false ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $customers) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#customerSubmenu">
                 <i class="fas fa-user-friends"></i> Customers
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo strpos($_SERVER['PHP_SELF'], 'customers') !== false || strpos($_SERVER['PHP_SELF'], 'add_customer') !== false || strpos($_SERVER['PHP_SELF'], 'customer_receiving') !== false ? 'show' : ''; ?>" id="customerSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $customers) ? 'show' : ''; ?>" id="customerSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_customer.php"><i class="fas fa-angle-right me-2"></i>Add Customer</a>
                     <a href="<?php echo $p; ?>customers.php"><i class="fas fa-angle-right me-2"></i>View Customer</a>
@@ -125,12 +155,12 @@ $r = $isInPages ? '../' : '';
         </div>
 
         <!-- Party Ledger -->
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'party') !== false ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $party) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#partySubmenu">
                 <i class="fas fa-address-book"></i> Party Ledger
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo strpos($_SERVER['PHP_SELF'], 'party') !== false ? 'show' : ''; ?>" id="partySubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $party) ? 'show' : ''; ?>" id="partySubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_party.php"><i class="fas fa-angle-right me-2"></i>Add Party</a>
                     <a href="<?php echo $p; ?>parties.php"><i class="fas fa-angle-right me-2"></i>View Parties</a>
@@ -142,12 +172,12 @@ $r = $isInPages ? '../' : '';
         </div>
 
         <!-- Employees -->
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'employee') !== false ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $employees) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#employeeSubmenu">
                 <i class="fas fa-users"></i> Employees
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo strpos($_SERVER['PHP_SELF'], 'employee') !== false ? 'show' : ''; ?>" id="employeeSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $employees) ? 'show' : ''; ?>" id="employeeSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_employee.php"><i class="fas fa-angle-right me-2"></i>Add Employee</a>
                     <a href="<?php echo $p; ?>employees.php"><i class="fas fa-angle-right me-2"></i>View Employees</a>
@@ -158,12 +188,12 @@ $r = $isInPages ? '../' : '';
         </div>
         
         <!-- Expenses -->
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'expense') !== false ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $expenses) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#expenseSubmenu">
                 <i class="fas fa-money-bill-wave"></i> Expenses
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo strpos($_SERVER['PHP_SELF'], 'expense') !== false ? 'show' : ''; ?>" id="expenseSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $expenses) ? 'show' : ''; ?>" id="expenseSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>expense_heads.php"><i class="fas fa-angle-right me-2"></i>Expense Heads</a>
                     <a href="<?php echo $p; ?>expenses.php"><i class="fas fa-angle-right me-2"></i>All Expenses</a>
@@ -172,12 +202,12 @@ $r = $isInPages ? '../' : '';
         </div>
         
         <!-- Accounts -->
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'accounts') !== false || strpos($_SERVER['PHP_SELF'], 'balance') !== false || strpos($_SERVER['PHP_SELF'], 'cashbook') !== false || strpos($_SERVER['PHP_SELF'], 'bankbook') !== false || strpos($_SERVER['PHP_SELF'], 'banks') !== false || strpos($_SERVER['PHP_SELF'], 'add_bank') !== false || strpos($_SERVER['PHP_SELF'], 'company_settings') !== false ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $accounts) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#accountsSubmenu">
                 <i class="fas fa-book"></i> Accounts
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo strpos($_SERVER['PHP_SELF'], 'accounts') !== false || strpos($_SERVER['PHP_SELF'], 'balance') !== false || strpos($_SERVER['PHP_SELF'], 'cashbook') !== false || strpos($_SERVER['PHP_SELF'], 'bankbook') !== false || strpos($_SERVER['PHP_SELF'], 'banks') !== false || strpos($_SERVER['PHP_SELF'], 'add_bank') !== false || strpos($_SERVER['PHP_SELF'], 'company_settings') !== false ? 'show' : ''; ?>" id="accountsSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $accounts) ? 'show' : ''; ?>" id="accountsSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>accounts.php"><i class="fas fa-angle-right me-2"></i>Ledger</a>
                     <a href="<?php echo $p; ?>cashbook.php"><i class="fas fa-angle-right me-2"></i>Cash Book</a>
@@ -191,12 +221,12 @@ $r = $isInPages ? '../' : '';
         </div>
         
         <!-- Reports -->
-        <div class="nav-item <?php echo strpos($_SERVER['PHP_SELF'], 'reports') !== false || strpos($_SERVER['PHP_SELF'], 'closing') !== false || strpos($_SERVER['PHP_SELF'], 'supplier_ledger') !== false || strpos($_SERVER['PHP_SELF'], 'customer_ledger') !== false || strpos($_SERVER['PHP_SELF'], 'chinese_supplier_ledger') !== false || strpos($_SERVER['PHP_SELF'], 'suppliers_summary') !== false || strpos($_SERVER['PHP_SELF'], 'chinese_suppliers_summary') !== false ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $reports) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#reportsSubmenu">
                 <i class="fas fa-chart-bar"></i> Reports
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo strpos($_SERVER['PHP_SELF'], 'reports') !== false || strpos($_SERVER['PHP_SELF'], 'closing') !== false || strpos($_SERVER['PHP_SELF'], 'supplier_ledger') !== false || strpos($_SERVER['PHP_SELF'], 'customer_ledger') !== false || strpos($_SERVER['PHP_SELF'], 'chinese_supplier_ledger') !== false || strpos($_SERVER['PHP_SELF'], 'suppliers_summary') !== false || strpos($_SERVER['PHP_SELF'], 'chinese_suppliers_summary') !== false ? 'show' : ''; ?>" id="reportsSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $reports) ? 'show' : ''; ?>" id="reportsSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <div class="sub-group-label">Financial</div>
                     <a href="<?php echo $p; ?>reports_profit_loss.php"><i class="fas fa-angle-right me-2"></i>Profit & Loss</a>

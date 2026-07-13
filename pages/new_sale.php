@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $currentDateTime = getCurrentDateTime();
         $paid_amount = 0;
         $payment_status = 'unpaid';
-        $balance = $final_amount;
+        $balance = $total_amount - $discount;
 
         if ($payment_method === 'cash' || $payment_method === 'bank') {
             $paid_amount = $final_amount;
@@ -385,9 +385,9 @@ function calcFinal() {
     var bill = parseFloat(document.getElementById('billDisplay').textContent) || 0;
     var prev = parseFloat(document.getElementById('prevAmount').value) || 0;
     var disc = parseFloat(document.getElementById('discInput').value) || 0;
-    var grand = (t === 'credit') ? bill + prev : bill;
+    var grand = bill + prev;
     document.getElementById('grandDisplay').textContent = grand.toFixed(2);
-    var fin = Math.max(0, grand - disc);
+    var fin = Math.max(0, bill - disc);
     document.getElementById('finalDisplay').textContent = fin.toFixed(2);
     document.getElementById('hidFinalAmount').value = fin.toFixed(2);
 }

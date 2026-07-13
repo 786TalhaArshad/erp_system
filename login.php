@@ -61,13 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Font Awesome 6 -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Google Font - Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Font - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        * {
-            font-family: 'Poppins', sans-serif;
-        }
+        * { font-family: 'Inter', sans-serif }
         
         body {
             background: linear-gradient(135deg, #1a2332 0%, #2a3a4a 100%);
@@ -79,63 +77,106 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 20px;
         }
         
-        .login-container {
+        .login-wrapper {
             width: 100%;
-            max-width: 420px;
-            padding: 20px;
+            max-width: 560px;
         }
         
         .login-card {
             background: #fff;
-            border-radius: 15px;
-            padding: 40px 35px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
+            overflow: hidden;
         }
         
-        .login-card .logo {
+        .login-header {
+            background: linear-gradient(135deg, #1a2332 0%, #2d3d50 100%);
+            padding: 36px 48px;
             text-align: center;
-            margin-bottom: 30px;
         }
         
-        .login-card .logo i {
-            font-size: 48px;
-            color: #1a2332;
-            background: #e8eaed;
-            padding: 15px;
-            border-radius: 50%;
+        .login-header .icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
         }
         
-        .login-card .logo h3 {
+        .login-header .icon i {
+            font-size: 28px;
+            color: #fff;
+        }
+        
+        .login-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 0 4px;
+        }
+        
+        .login-header p {
+            font-size: 13px;
+            color: rgba(255,255,255,0.65);
+            margin: 0;
+        }
+        
+        .login-body {
+            padding: 36px 48px 44px;
+        }
+        
+        .login-body .form-label {
+            font-size: 13px;
             font-weight: 600;
-            color: #1a2332;
-            margin-top: 15px;
+            color: #374151;
+            margin-bottom: 6px;
         }
         
-        .login-card .logo p {
-            color: #6c757d;
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+            color: #9ca3af;
+            pointer-events: none;
+        }
+        
+        .input-icon .form-control {
+            padding-left: 42px;
+            height: 46px;
             font-size: 14px;
-        }
-        
-        .form-control {
-            border-radius: 10px;
-            padding: 12px 16px;
             border: 1px solid #d1d5db;
+            border-radius: 8px;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
         
-        .form-control:focus {
+        .input-icon .form-control:focus {
             border-color: #1a2332;
-            box-shadow: 0 0 0 0.2rem rgba(26, 35, 50, 0.1);
+            box-shadow: 0 0 0 3px rgba(26,35,50,0.1);
         }
         
         .btn-login {
             background: #1a2332;
             color: #fff;
-            padding: 12px;
-            border-radius: 10px;
+            height: 46px;
+            border-radius: 8px;
+            font-size: 14px;
             font-weight: 600;
             width: 100%;
             border: none;
-            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
         }
         
         .btn-login:hover {
@@ -144,54 +185,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .alert {
-            border-radius: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            padding: 10px 14px;
+        }
+        
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        @media (max-width: 480px) {
+            .login-header, .login-body { padding-left: 28px; padding-right: 28px }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="login-wrapper">
         <div class="login-card">
-            <div class="logo">
-                <i class="fas fa-industry"></i>
+            <div class="login-header">
+                <div class="icon">
+                    <i class="fas fa-industry"></i>
+                </div>
                 <h3>ERP System</h3>
                 <p>Manufacturing Enterprise Resource Planning</p>
             </div>
             
-            <?php if ($error): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    <?php echo $error; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-            
-            <form method="POST" action="">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light"><i class="fas fa-user"></i></span>
-                        <input type="text" class="form-control" id="username" name="username" 
-                               placeholder="Enter username" required autofocus>
+            <div class="login-body">
+                <?php if ($error): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-circle-exclamation me-2"></i>
+                        <?php echo $error; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                </div>
+                <?php endif; ?>
                 
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light"><i class="fas fa-lock"></i></span>
-                        <input type="password" class="form-control" id="password" name="password" 
-                               placeholder="Enter password" required>
+                <form method="POST" action="">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <div class="input-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Enter your username" required autofocus>
+                        </div>
                     </div>
-                </div>
-                
-                <button type="submit" class="btn-login">
-                    <i class="fas fa-sign-in-alt me-2"></i> Login
-                </button>
-            </form>
-            
-            <div class="mt-3 text-center text-muted" style="font-size: 13px;">
-                <span>Default: admin / admin</span>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Enter your password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn-login">
+                            <i class="fas fa-right-to-bracket"></i> Sign In
+                        </button>
+                    </div>
+                </form>
             </div>
+        </div>
+        
+        <div class="footer-note">
+            <i class="fas fa-shield-halved me-1"></i> Secure Login
         </div>
     </div>
     
