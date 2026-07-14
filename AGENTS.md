@@ -6,7 +6,7 @@
 - **No CSRF protection** on any form
 - **Database**: MySQL `erp_system` on `localhost` (`root` / empty password)
   - `includes/database.php` defines helpers: `getRow`, `getRows`, `insertData`, `modifyData`, `executePrepared`, `escapeString`
-  - `erp_system.sql` is the canonical schema + seed; also present: `erp_new.sql`, `erp_system (1).sql`, `fix_missing_tables.sql` — no migration tool, ALTER TABLE manually
+  - `erp_system.sql` is the canonical schema + seed — no migration tool, ALTER TABLE manually
    - Session auto-starts at `database.php:210` — do NOT call `session_start()` again
 - **Frontend**: Bootstrap 5.3, Font Awesome 6.4, jQuery 3.7, DataTables 1.13 — all **CDN-loaded**
   - jQuery loads in `header.php:300` (before inline scripts)
@@ -18,6 +18,7 @@
 - **No `timestamp`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`** — use only `date_time DATETIME`
 - Money: `DECIMAL(18,2)`; IDs: `INT AUTO_INCREMENT PRIMARY KEY`; Text: `VARCHAR` where possible
 - `formatCurrency()` is just `number_format($amount, 2)` — it does NOT add currency symbols; labels like "PKR" are added in HTML
+- **Avoid `SELECT t.* ... GROUP BY t.id`** — MySQL 8's `ONLY_FULL_GROUP_BY` rejects non-aggregated columns not in GROUP BY. Use a correlated subquery instead: `SELECT t.*, COALESCE((SELECT SUM(...) FROM child c WHERE c.fk = t.id), 0) as total ... FROM parent t`
 
 ## Architecture
 - `login.php`, `logout.php` — standalone auth entrypoints; logout.php calls `session_start()` directly (doesn't include database.php)
@@ -29,9 +30,12 @@
   - `$p = $isInPages ? '' : 'pages/'` — links use `<?php echo $p; ?>filename.php`
   - `$r = $isInPages ? '../' : ''` — for links back to root files like `index.php`
   - Sidebar active-state uses `in_array($page, $array)` with exact filename arrays per section — NOT `strpos()` (which caused false positives like `all_customers_closing.php` matching the Customers section)
-  - `$page = basename($_SERVER['PHP_SELF'])` is set at top; each section has an explicit filename list (e.g. `$sales`, `$customers`, `$reports`)
+  - `$page = basename($_SERVER['PHP_SELF'])` is set at top; each section has an explicit filename list (e.g. `$salesPages`, `$customerPages`, `$reportPages`)
+  - **CRITICAL**: Sidebar arrays use `*Pages` suffix (`$supplierPages`, `$customerPages`, etc.) because `sidebar.php` is `include`d inside the page's scope — using bare names like `$customers` or `$sales` silently overwrites the page's query results with a string array, causing `TypeError: Cannot access offset of type string on string` in the template. The comment at `sidebar.php:9` documents this.
   - When adding a new page, add its filename to the relevant array in `sidebar.php` to get correct active/open behavior
 - Accordion submenus: `data-bs-parent=".sidebar-nav"` on each collapse — opening one closes others
+- **Sidebar gaps**: `material_issue.php`, `sale_refund.php`, `add_expense_head.php` exist in `pages/` but are NOT in any sidebar filename array — they load but get no active-state highlighting. Detail pages (`*_detail.php`) and print pages (`*_print.php`) are also unlisted (intentional — they are secondary views)
+- **AJAX endpoints**: `ajax_customer_balance.php`, `ajax_import_purchase.php` return JSON via `header('Content-Type: application/json')` — they do NOT include sidebar/footer and don't follow the page pattern
 
 ## Page Pattern
 Every `pages/*.php`:
@@ -89,7 +93,7 @@ Also: Employee Ledger, Expense Management, Accounts, Reports.
 - **Sales balance**: In `new_sale.php`, `balance = total_amount - discount` (NOT `final_amount` which includes prev balance for display). `final_amount` = `bill - discount` (excludes prev balance). Prev balance is display-only in the UI.
 - **Sales table columns**: `sales` table has `customer_type`, `walkin_name`, `walkin_phone`, `final_amount`, `payment_method` beyond the base columns. INSERT queries must include all of them.
 - **customer_receiving.php balance**: Receipt delete recalculates using `total_amount - discount` to stay consistent with `new_sale.php` balance convention.
-- **SQL files**: Multiple SQL files exist in root — `erp_system.sql` is canonical; others are incremental fixes or backups
+- **SQL files**: `erp_system.sql` is the canonical schema + seed file in root
 
 ## Development
 - **No build step, no package manager, no tests, no CI** — PHP on XAMPP

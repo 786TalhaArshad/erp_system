@@ -57,7 +57,7 @@ include '../includes/sidebar.php';
 ?>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card shadow-sm">
             <div class="card-header" style="background:#0d6efd;color:#fff;">
                 <i class="fas fa-money-bill me-2"></i>Pay to Party

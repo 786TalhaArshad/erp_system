@@ -57,7 +57,7 @@ include '../includes/sidebar.php';
 ?>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card shadow-sm">
             <div class="card-header" style="background:#198754;color:#fff;">
                 <i class="fas fa-hand-holding-usd me-2"></i>Receive from Party

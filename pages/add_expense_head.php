@@ -61,7 +61,7 @@ include '../includes/sidebar.php';
 ?>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card shadow-sm">
             <div class="card-header" style="background:#1a2332;color:#fff;">
                 <i class="fas fa-tag me-2"></i><?php echo $editHead ? 'Edit Expense Head' : 'Add Expense Head'; ?>

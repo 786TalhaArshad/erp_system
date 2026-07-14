@@ -10,7 +10,10 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 include '../includes/print_header.php';
 
-$employees = getRows("SELECT e.*, COALESCE(SUM(ep.amount),0) AS total_paid FROM employees e LEFT JOIN employee_payments ep ON ep.employee_id = e.id GROUP BY e.id ORDER BY e.employee_name");
+$employees = getRows("SELECT e.*,
+    COALESCE((SELECT SUM(ep.amount) FROM employee_payments ep WHERE ep.employee_id = e.id), 0) AS total_paid
+    FROM employees e
+    ORDER BY e.employee_name");
 $totalEmp = count($employees);
 $totalSalary = 0; $totalPaid = 0;
 foreach($employees as $e) { $totalSalary += (float)$e['monthly_salary']; $totalPaid += (float)$e['total_paid']; }

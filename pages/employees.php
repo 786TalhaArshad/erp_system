@@ -31,10 +31,9 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     }
 }
 
-$employees = getRows("SELECT e.*, COALESCE(SUM(ep.amount), 0) as total_paid
+$employees = getRows("SELECT e.*,
+    COALESCE((SELECT SUM(ep.amount) FROM employee_payments ep WHERE ep.employee_id = e.id), 0) as total_paid
     FROM employees e
-    LEFT JOIN employee_payments ep ON ep.employee_id = e.id
-    GROUP BY e.id
     ORDER BY e.id DESC");
 
 $totalEmployees = count($employees);

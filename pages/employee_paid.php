@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $payment_no = generateCode('EP');
 
         $result = insertData("INSERT INTO employee_payments (payment_no, employee_id, payment_date, amount, month_year, payment_type, notes, payable_id, date_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            'sisdssssi', [$payment_no, $employee_id, $payment_date, $amount, $month_year, $payment_type, $notes, $payable_id > 0 ? $payable_id : null, $currentDateTime]);
+            'sisdsssis', [$payment_no, $employee_id, $payment_date, $amount, $month_year, $payment_type, $notes, $payable_id > 0 ? $payable_id : null, $currentDateTime]);
 
         if ($result) {
             modifyData("UPDATE employees SET current_balance = current_balance - ? WHERE id = ?", 'di', [$amount, $employee_id]);
@@ -102,9 +102,6 @@ include '../includes/sidebar.php';
     <div class="col-12">
         <a href="employees.php" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Employees</a>
         <a href="employee_payable.php" class="btn btn-outline-primary btn-sm ms-2"><i class="fas fa-file-invoice me-1"></i>View Payable</a>
-        <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#paymentModal">
-            <i class="fas fa-plus me-2"></i>Make New Payment
-        </button>
     </div>
 </div>
 

@@ -6,19 +6,21 @@ $p = $isInPages ? '' : 'pages/';
 $r = $isInPages ? '../' : '';
 
 // Exact filename lists per section — prevents strpos false positives
+// IMPORTANT: Do NOT use names like $customers, $suppliers, $sales, $expenses, $accounts,
+// $reports, $party, $production — pages query data into those variables BEFORE including sidebar.
 $localPurchases = ['add_local_purchase.php', 'local_purchases.php'];
 $importPurchases = ['add_import_purchase.php', 'import_purchases.php'];
-$suppliers = ['local_suppliers.php', 'suppliers_summary.php', 'supplier_payments.php', 'supplier_detail.php', 'supplier_ledger.php', 'chinese_suppliers.php', 'chinese_suppliers_summary.php', 'chinese_supplier_payment.php'];
+$supplierPages = ['local_suppliers.php', 'suppliers_summary.php', 'supplier_payments.php', 'supplier_detail.php', 'supplier_ledger.php', 'chinese_suppliers.php', 'chinese_suppliers_summary.php', 'chinese_supplier_payment.php'];
 $rawMaterials = ['raw_materials.php', 'add_raw_materials.php'];
 $finishedGoods = ['finished_goods.php', 'add_finished_goods.php', 'products.php', 'add_product.php'];
-$production = ['add_production.php', 'production.php', 'view_production.php'];
-$sales = ['new_sale.php', 'sales.php', 'view_hold_bills.php', 'sale_print.php'];
-$customers = ['add_customer.php', 'customers.php', 'customer_receiving.php'];
-$party = ['add_party.php', 'parties.php', 'add_party_payable.php', 'add_party_received.php', 'add_party_paid.php'];
-$employees = ['add_employee.php', 'employees.php', 'employee_payable.php', 'employee_paid.php'];
-$expenses = ['expense_heads.php', 'expenses.php'];
-$accounts = ['accounts.php', 'cashbook.php', 'bankbook.php', 'banks.php', 'add_bank.php', 'balance_sheet.php', 'company_settings.php'];
-$reports = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cashflow.php', 'reports_purchases.php', 'reports_sales.php', 'reports_inventory.php', 'reports_expenses.php', 'reports_production.php', 'reports_suppliers.php', 'reports_customers.php', 'reports_parties.php', 'reports_employees.php', 'all_customers_closing.php', 'all_suppliers_closing.php', 'all_parties_closing.php', 'customer_ledger.php', 'supplier_ledger.php', 'chinese_supplier_ledger.php', 'suppliers_summary.php', 'chinese_suppliers_summary.php'];
+$productionPages = ['add_production.php', 'production.php', 'view_production.php'];
+$salesPages = ['new_sale.php', 'sales.php', 'view_hold_bills.php', 'sale_print.php'];
+$customerPages = ['add_customer.php', 'customers.php', 'customer_receiving.php'];
+$partyPages = ['add_party.php', 'parties.php', 'add_party_payable.php', 'add_party_received.php', 'add_party_paid.php'];
+$employeePages = ['add_employee.php', 'employees.php', 'employee_payable.php', 'employee_paid.php'];
+$expensePages = ['expense_heads.php', 'expenses.php'];
+$accountPages = ['accounts.php', 'cashbook.php', 'bankbook.php', 'banks.php', 'add_bank.php', 'balance_sheet.php', 'company_settings.php'];
+$reportPages = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cashflow.php', 'reports_purchases.php', 'reports_sales.php', 'reports_inventory.php', 'reports_expenses.php', 'reports_production.php', 'reports_suppliers.php', 'reports_customers.php', 'reports_parties.php', 'reports_employees.php', 'all_customers_closing.php', 'all_suppliers_closing.php', 'all_parties_closing.php', 'customer_ledger.php', 'supplier_ledger.php', 'chinese_supplier_ledger.php', 'suppliers_summary.php', 'chinese_suppliers_summary.php'];
 ?>
 <!-- Sidebar -->
 <nav id="sidebar">
@@ -63,12 +65,12 @@ $reports = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cas
         </div>
         
         <!-- Suppliers -->
-        <div class="nav-item <?php echo in_array($page, $suppliers) ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $supplierPages) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#supplierSubmenu">
                 <i class="fas fa-truck"></i> Suppliers
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo in_array($page, $suppliers) ? 'show' : ''; ?>" id="supplierSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $supplierPages) ? 'show' : ''; ?>" id="supplierSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <div class="sub-group-label">Local Suppliers</div>
                     <a href="<?php echo $p; ?>local_suppliers.php"><i class="fas fa-angle-right me-2"></i>Supplier List</a>
@@ -110,12 +112,12 @@ $reports = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cas
         </div>
         
         <!-- Production -->
-        <div class="nav-item <?php echo in_array($page, $production) ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $productionPages) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#productionSubmenu">
                 <i class="fas fa-cogs"></i> Production
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo in_array($page, $production) ? 'show' : ''; ?>" id="productionSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $productionPages) ? 'show' : ''; ?>" id="productionSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_production.php"><i class="fas fa-angle-right me-2"></i>New Production</a>
                     <a href="<?php echo $p; ?>production.php"><i class="fas fa-angle-right me-2"></i>View Production</a>
@@ -124,12 +126,12 @@ $reports = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cas
         </div>
         
         <!-- Sales -->
-        <div class="nav-item <?php echo in_array($page, $sales) ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $salesPages) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#salesSubmenu">
                 <i class="fas fa-handshake"></i> Sales
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo in_array($page, $sales) ? 'show' : ''; ?>" id="salesSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $salesPages) ? 'show' : ''; ?>" id="salesSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <div class="sub-group-label">Sales Orders</div>
                     <a href="<?php echo $p; ?>new_sale.php"><i class="fas fa-angle-right me-2"></i>New Sale</a>
@@ -140,12 +142,12 @@ $reports = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cas
         </div>
         
         <!-- Customers -->
-        <div class="nav-item <?php echo in_array($page, $customers) ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $customerPages) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#customerSubmenu">
                 <i class="fas fa-user-friends"></i> Customers
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo in_array($page, $customers) ? 'show' : ''; ?>" id="customerSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $customerPages) ? 'show' : ''; ?>" id="customerSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_customer.php"><i class="fas fa-angle-right me-2"></i>Add Customer</a>
                     <a href="<?php echo $p; ?>customers.php"><i class="fas fa-angle-right me-2"></i>View Customer</a>
@@ -155,12 +157,12 @@ $reports = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cas
         </div>
 
         <!-- Party Ledger -->
-        <div class="nav-item <?php echo in_array($page, $party) ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $partyPages) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#partySubmenu">
                 <i class="fas fa-address-book"></i> Party Ledger
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo in_array($page, $party) ? 'show' : ''; ?>" id="partySubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $partyPages) ? 'show' : ''; ?>" id="partySubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_party.php"><i class="fas fa-angle-right me-2"></i>Add Party</a>
                     <a href="<?php echo $p; ?>parties.php"><i class="fas fa-angle-right me-2"></i>View Parties</a>
@@ -172,12 +174,12 @@ $reports = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cas
         </div>
 
         <!-- Employees -->
-        <div class="nav-item <?php echo in_array($page, $employees) ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $employeePages) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#employeeSubmenu">
                 <i class="fas fa-users"></i> Employees
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo in_array($page, $employees) ? 'show' : ''; ?>" id="employeeSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $employeePages) ? 'show' : ''; ?>" id="employeeSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_employee.php"><i class="fas fa-angle-right me-2"></i>Add Employee</a>
                     <a href="<?php echo $p; ?>employees.php"><i class="fas fa-angle-right me-2"></i>View Employees</a>
@@ -188,12 +190,12 @@ $reports = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cas
         </div>
         
         <!-- Expenses -->
-        <div class="nav-item <?php echo in_array($page, $expenses) ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $expensePages) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#expenseSubmenu">
                 <i class="fas fa-money-bill-wave"></i> Expenses
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo in_array($page, $expenses) ? 'show' : ''; ?>" id="expenseSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $expensePages) ? 'show' : ''; ?>" id="expenseSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>expense_heads.php"><i class="fas fa-angle-right me-2"></i>Expense Heads</a>
                     <a href="<?php echo $p; ?>expenses.php"><i class="fas fa-angle-right me-2"></i>All Expenses</a>
@@ -202,12 +204,12 @@ $reports = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cas
         </div>
         
         <!-- Accounts -->
-        <div class="nav-item <?php echo in_array($page, $accounts) ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $accountPages) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#accountsSubmenu">
                 <i class="fas fa-book"></i> Accounts
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo in_array($page, $accounts) ? 'show' : ''; ?>" id="accountsSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $accountPages) ? 'show' : ''; ?>" id="accountsSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>accounts.php"><i class="fas fa-angle-right me-2"></i>Ledger</a>
                     <a href="<?php echo $p; ?>cashbook.php"><i class="fas fa-angle-right me-2"></i>Cash Book</a>
@@ -221,12 +223,12 @@ $reports = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports_cas
         </div>
         
         <!-- Reports -->
-        <div class="nav-item <?php echo in_array($page, $reports) ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $reportPages) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#reportsSubmenu">
                 <i class="fas fa-chart-bar"></i> Reports
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo in_array($page, $reports) ? 'show' : ''; ?>" id="reportsSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $reportPages) ? 'show' : ''; ?>" id="reportsSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <div class="sub-group-label">Financial</div>
                     <a href="<?php echo $p; ?>reports_profit_loss.php"><i class="fas fa-angle-right me-2"></i>Profit & Loss</a>
