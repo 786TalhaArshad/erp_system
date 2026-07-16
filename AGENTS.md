@@ -7,7 +7,8 @@
 - **Database**: MySQL `erp_system` on `localhost` (`root` / empty password)
   - `includes/database.php` defines helpers: `getRow`, `getRows`, `insertData`, `modifyData`, `executePrepared`, `escapeString`
   - `erp_system.sql` is the canonical schema + seed — no migration tool, ALTER TABLE manually
-   - Session auto-starts at `database.php:210` — do NOT call `session_start()` again
+  - **Schema drift**: `erp_system.sql` is stale vs running code. `sales` table in SQL lacks `customer_type`, `walkin_name`, `walkin_phone`, `final_amount`, `payment_method` columns and `hold` status value that `new_sale.php` uses. `chinese_suppliers` SQL has `current_balance` but code queries `balance_cny`. Run `DESCRIBE sales;` / `DESCRIBE chinese_suppliers;` against the live DB to see actual columns.
+  - Session auto-starts at `database.php:209` — do NOT call `session_start()` again
 - **Frontend**: Bootstrap 5.3, Font Awesome 6.4, jQuery 3.7, DataTables 1.13 — all **CDN-loaded**
   - jQuery loads in `header.php:300` (before inline scripts)
   - Bootstrap JS bundle loads in `footer.php:6`
@@ -34,7 +35,7 @@
   - **CRITICAL**: Sidebar arrays use `*Pages` suffix (`$supplierPages`, `$customerPages`, etc.) because `sidebar.php` is `include`d inside the page's scope — using bare names like `$customers` or `$sales` silently overwrites the page's query results with a string array, causing `TypeError: Cannot access offset of type string on string` in the template. The comment at `sidebar.php:9` documents this.
   - When adding a new page, add its filename to the relevant array in `sidebar.php` to get correct active/open behavior
 - Accordion submenus: `data-bs-parent=".sidebar-nav"` on each collapse — opening one closes others
-- **Sidebar gaps**: `material_issue.php`, `sale_refund.php`, `add_expense_head.php` exist in `pages/` but are NOT in any sidebar filename array — they load but get no active-state highlighting. Detail pages (`*_detail.php`) and print pages (`*_print.php`) are also unlisted (intentional — they are secondary views)
+- **Sidebar gaps**: `material_issue.php`, `sale_refund.php`, `add_expense_head.php`, `production.php`, `sale_view.php`, `payment_receipt.php` exist in `pages/` but are NOT in any sidebar filename array — they load but get no active-state highlighting. Detail pages (`*_detail.php`) and print pages (`*_print.php`) are also unlisted (intentional — they are secondary views). When adding a new page, add its filename to the relevant array in `sidebar.php` to get correct active/open behavior
 - **AJAX endpoints**: `ajax_customer_balance.php`, `ajax_import_purchase.php` return JSON via `header('Content-Type: application/json')` — they do NOT include sidebar/footer and don't follow the page pattern
 
 ## Page Pattern

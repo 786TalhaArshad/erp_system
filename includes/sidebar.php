@@ -11,9 +11,9 @@ $r = $isInPages ? '../' : '';
 $localPurchases = ['add_local_purchase.php', 'local_purchases.php'];
 $importPurchases = ['add_import_purchase.php', 'import_purchases.php'];
 $supplierPages = ['local_suppliers.php', 'suppliers_summary.php', 'supplier_payments.php', 'supplier_detail.php', 'supplier_ledger.php', 'chinese_suppliers.php', 'chinese_suppliers_summary.php', 'chinese_supplier_payment.php'];
-$rawMaterials = ['raw_materials.php', 'add_raw_materials.php'];
-$finishedGoods = ['finished_goods.php', 'add_finished_goods.php', 'products.php', 'add_product.php'];
-$productionPages = ['add_production.php', 'production.php', 'view_production.php'];
+$rawMaterialPages = ['raw_materials.php', 'add_raw_materials.php'];
+$finishedGoods = ['finished_goods.php', 'add_finished_goods.php', 'products.php', 'add_product.php', 'add_fg_receipt.php', 'view_fg_receipt.php'];
+$productionPages = ['add_general_issuance.php', 'view_general_issuance.php'];
 $salesPages = ['new_sale.php', 'sales.php', 'view_hold_bills.php', 'sale_print.php'];
 $customerPages = ['add_customer.php', 'customers.php', 'customer_receiving.php'];
 $partyPages = ['add_party.php', 'parties.php', 'add_party_payable.php', 'add_party_received.php', 'add_party_paid.php'];
@@ -85,12 +85,12 @@ $reportPages = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports
         </div>
         
         <!-- Inventory -->
-        <div class="nav-item <?php echo in_array($page, $rawMaterials) ? 'active' : ''; ?>">
+        <div class="nav-item <?php echo in_array($page, $rawMaterialPages) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#rawMaterialsSubmenu">
                 <i class="fas fa-cubes"></i> Raw Materials
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
-            <div class="collapse <?php echo in_array($page, $rawMaterials) ? 'show' : ''; ?>" id="rawMaterialsSubmenu" data-bs-parent=".sidebar-nav">
+            <div class="collapse <?php echo in_array($page, $rawMaterialPages) ? 'show' : ''; ?>" id="rawMaterialsSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_raw_materials.php"><i class="fas fa-angle-right me-2"></i>Add Raw Material</a>
                     <a href="<?php echo $p; ?>raw_materials.php"><i class="fas fa-angle-right me-2"></i>View Raw Materials</a>
@@ -107,6 +107,8 @@ $reportPages = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports
                 <div class="sub-menu">
                     <a href="<?php echo $p; ?>add_finished_goods.php"><i class="fas fa-angle-right me-2"></i>Add Finished Good</a>
                     <a href="<?php echo $p; ?>finished_goods.php"><i class="fas fa-angle-right me-2"></i>View Finished Goods</a>
+                    <a href="<?php echo $p; ?>add_fg_receipt.php"><i class="fas fa-angle-right me-2"></i>Receive FG Stock</a>
+                    <a href="<?php echo $p; ?>view_fg_receipt.php"><i class="fas fa-angle-right me-2"></i>FG Receipts</a>
                 </div>
             </div>
         </div>
@@ -114,13 +116,13 @@ $reportPages = ['reports_profit_loss.php', 'reports_trial_balance.php', 'reports
         <!-- Production -->
         <div class="nav-item <?php echo in_array($page, $productionPages) ? 'active' : ''; ?>">
             <a href="#" data-bs-toggle="collapse" data-bs-target="#productionSubmenu">
-                <i class="fas fa-cogs"></i> Production
+                <i class="fas fa-cogs"></i> Issuance
                 <i class="fas fa-chevron-down ms-auto"></i>
             </a>
             <div class="collapse <?php echo in_array($page, $productionPages) ? 'show' : ''; ?>" id="productionSubmenu" data-bs-parent=".sidebar-nav">
                 <div class="sub-menu">
-                    <a href="<?php echo $p; ?>add_production.php"><i class="fas fa-angle-right me-2"></i>New Production</a>
-                    <a href="<?php echo $p; ?>production.php"><i class="fas fa-angle-right me-2"></i>View Production</a>
+                    <a href="<?php echo $p; ?>add_general_issuance.php"><i class="fas fa-angle-right me-2"></i>Add General Issuance</a>
+                    <a href="<?php echo $p; ?>view_general_issuance.php"><i class="fas fa-angle-right me-2"></i>View General Issuance</a>
                 </div>
             </div>
         </div>

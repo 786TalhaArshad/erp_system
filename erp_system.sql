@@ -601,7 +601,7 @@ CREATE TABLE `material_issues` (
   `id` int(11) NOT NULL,
   `issue_no` varchar(50) NOT NULL,
   `issue_date` date DEFAULT NULL,
-  `production_order_id` int(11) NOT NULL,
+  `production_order_id` int(11) DEFAULT NULL,
   `notes` text DEFAULT NULL,
   `total_value` decimal(18,2) DEFAULT 0.00,
   `status` varchar(20) DEFAULT 'pending',
@@ -1299,8 +1299,6 @@ ALTER TABLE `customer_receipts`
 --
 -- Constraints for table `material_issues`
 --
-ALTER TABLE `material_issues`
-  ADD CONSTRAINT `material_issues_ibfk_1` FOREIGN KEY (`production_order_id`) REFERENCES `production_orders` (`id`);
 
 --
 -- Constraints for table `material_issue_items`
@@ -1394,6 +1392,59 @@ CREATE TABLE `company_settings` (
 
 INSERT INTO `company_settings` (`id`, `company_name`, `company_tagline`, `address`, `phone`, `email`, `website`, `logo_path`, `date_time`) VALUES
 (1, 'Your Company Name', 'Manufacturing ERP System', 'Your Company Address', '+92-300-1234567', 'info@company.com', 'www.company.com', NULL, NOW());
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `general_issuances`
+--
+
+CREATE TABLE `general_issuances` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `issuance_no` varchar(50) NOT NULL,
+  `issuance_date` date DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `total_items` int(11) DEFAULT 0,
+  `total_quantity` decimal(18,2) DEFAULT 0.00,
+  `status` varchar(20) DEFAULT 'issued',
+  `date_time` datetime DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `general_issuance_items`
+--
+
+CREATE TABLE `general_issuance_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `issuance_id` int(11) NOT NULL,
+  `material_id` int(11) NOT NULL,
+  `quantity` decimal(18,2) NOT NULL,
+  `date_time` datetime DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY `issuance_id` (`issuance_id`),
+  KEY `material_id` (`material_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `fg_receipts`
+--
+
+CREATE TABLE `fg_receipts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `receipt_no` varchar(50) NOT NULL,
+  `receipt_date` date NOT NULL,
+  `finished_good_id` int(11) NOT NULL,
+  `quantity` decimal(18,2) NOT NULL,
+  `notes` text DEFAULT NULL,
+  `date_time` datetime DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY `finished_good_id` (`finished_good_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 COMMIT;
 
